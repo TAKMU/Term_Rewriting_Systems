@@ -16,16 +16,43 @@
 
 
 \title{Term Rewriting Systems}
-\author{Allan Ken Miyazono UShijima & Luis Fregoso}
+\author{Allan Ken Miyazono Ushijima \and Luis Fregoso}
+
 \date{}
 \begin{document}
 
+\maketitle
 \section{Rewrite Rules}
 \begin{itemize}
     \item \textbf{binaryOperatorp(): }It is a rule that recognizes the operators as facts of binaryOperatorp.
     \item \textbf{unaryOperatorp(): }It is a rule that recognizes $\neg$ as a fact of unaryOperatorp.
     \item \textbf{constantp(P): }It is a rule that recognizes a propositional constant.
-    \item \textbf{propositionp(P): }It is a rule that recognize a proposition. It has to either be a constantp, a proposition with a $\neg$, or two propositions connected with a binaryOperatorp.  
+    \item \textbf{propositionp(P): }It is a rule that recognize a proposition. It has to either be a constantp, a proposition with a $\neg$, or two propositions connected with a binaryOperatorp.
+    \item \textbf{formula2cnf(P, \_): }It is the a rule that check if it is appropiate language (propositionp(P)), transforms it to conjunctive normal form (cnf()), splits propositions into conjuncts ($\land$), and splits conjuncts by the $\lor$ (maplist()).
+    \item \textbf{cnf(P, CNF): }It is the rule where the main transformation occurs: \textit{elim(P, P1)} that removes $\leftrightarrow$ and $\rightarrow$, \textit{nnf(P1, P2)} that pushes down the $\neg$ down to atoms, and \textit{dist} that deals with the distributive laws.
+    \item \textbf{elim(P, P1): }It is the rule that eliminates the double implication ($\leftrightarrow$) and implication ($\rightarrow$). The biconditional doesn't transform to implication, but to conjuctions and disjunctions directly.
+   
+    $ P \leftrightarrow Q \equiv (P \rightarrow Q) \land (Q \rightarrow P)$
+    
+    $ P \leftrightarrow Q \equiv (\neg P \lor Q) \land (\neg Q \lor P) $
+    
+    $P \rightarrow Q \equiv \neg P \lor Q$
+
+    \item \textbf{nnf(P, P1): }This deals with either the double negation, or De Morgan's laws: 
+    
+    $\neg (\neg P) \equiv P$
+
+    $\neg(P \lor Q) \equiv \neg P \land \neg Q $ 
+    
+    $ \neg(P \land Q) \equiv \neg P \lor \neg Q$
+
+    \item \textbf{dist(P, CNF): }This rule formats the proposition to CNF using distribution laws. 
+    
+    $P \lor (Q \land R) \equiv (P \lor Q) \land (P \lor R)$
+
+    $(Q \land R) \lor P \equiv (P \lor Q) \land (P \lor R)$
+
+    \item \textbf{}
 \end{itemize}
 
 \section{Control Strategies}

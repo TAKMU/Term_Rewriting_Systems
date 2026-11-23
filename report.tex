@@ -24,38 +24,112 @@
 \maketitle
 \section{Rewrite Rules}
 \begin{itemize}
-    \item \textbf{binaryOperatorp(): }It is a rule that recognizes the operators as facts of binaryOperatorp.
-    \item \textbf{unaryOperatorp(): }It is a rule that recognizes $\neg$ as a fact of unaryOperatorp.
-    \item \textbf{constantp(P): }It is a rule that recognizes a propositional constant.
-    \item \textbf{propositionp(P): }It is a rule that recognize a proposition. It has to either be a constantp, a proposition with a $\neg$, or two propositions connected with a binaryOperatorp.
-    \item \textbf{formula2cnf(P, \_): }It is the a rule that check if it is appropiate language (propositionp(P)), transforms it to conjunctive normal form (cnf()), splits propositions into conjuncts ($\land$), and splits conjuncts by the $\lor$ (maplist()).
-    \item \textbf{cnf(P, CNF): }It is the rule where the main transformation occurs: \textit{elim(P, P1)} that removes $\leftrightarrow$ and $\rightarrow$, \textit{nnf(P1, P2)} that pushes down the $\neg$ down to atoms, and \textit{dist} that deals with the distributive laws.
-    \item \textbf{elim(P, P1): }It is the rule that eliminates the double implication ($\leftrightarrow$) and implication ($\rightarrow$). The biconditional doesn't transform to implication, but to conjuctions and disjunctions directly.
-   
-    $ P \leftrightarrow Q \equiv (P \rightarrow Q) \land (Q \rightarrow P)$
-    
-    $ P \leftrightarrow Q \equiv (\neg P \lor Q) \land (\neg Q \lor P) $
-    
+    \item \textbf{\texttt{binaryOperatorp/1}:} A predicate defined by facts that lists
+    the binary connectives $\land$, $\lor$, $\rightarrow$ and $\leftrightarrow$.
+
+    \item \textbf{\texttt{unaryOperatorp/1}:} A predicate defined by a single fact
+    stating that $\neg$ is the only unary connective.
+
+    \item \textbf{\texttt{constantp(P)}:} A rule that recognizes a propositional
+    constant: \texttt{P} must be a Prolog atom (e.g.\ $p$, $q$) that is not a
+    connective symbol.
+
+    \item \textbf{\texttt{propositionp(P)}:} A recursive rule that recognizes a
+    well-formed formula, following the inductive definition of the language:
+    \texttt{P} is either a propositional constant, $\neg$ applied to a proposition,
+    or two propositions joined by a binary connective. Unbound Prolog variables
+    are rejected.
+
+    \item \textbf{\texttt{formula2cnf(P, L)}:} The main predicate. If \texttt{P} is
+    not a proposition, it raises a \texttt{domain\_error}. Otherwise it:
+    (1) converts \texttt{P} to CNF (\texttt{cnf/2});
+    (2) splits the result into its conjuncts (\texttt{conj\_list/2});
+    (3) splits each conjunct into its literals (\texttt{maplist} with \texttt{disj\_list/2});
+    (4) turns each clause into a set by sorting it and removing duplicate literals (\texttt{sort/2});
+    (5) removes tautological clauses (\texttt{tautology/1});
+    (6) removes duplicate clauses (\texttt{sort/2}); and
+    (7) numbers the clauses, producing a list of pairs $\langle i, C_i \rangle$,
+    written \texttt{I-Ci} (\texttt{findall/3} with \texttt{nth1/3}).
+
+    \item \textbf{\texttt{cnf(P, CNF)}:} The core transformation, in three passes:
+    \texttt{elim(P, P1)} removes $\leftrightarrow$ and $\rightarrow$,
+    \texttt{nnf(P1, P2)} pushes $\neg$ down to the atoms, and
+    \texttt{dist(P2, CNF)} distributes $\lor$ over $\land$.
+
+    \item \textbf{\texttt{elim(P, P1)}:} Recursively eliminates the biconditional and
+    the implication. The biconditional is rewritten directly into conjunctions and
+    disjunctions, without passing through implication. By definition,
+    $P \leftrightarrow Q \equiv (P \rightarrow Q) \land (Q \rightarrow P)$;
+    the rules applied are:
+
+    $P \leftrightarrow Q \equiv (\neg P \lor Q) \land (\neg Q \lor P)$
+
     $P \rightarrow Q \equiv \neg P \lor Q$
 
-    \item \textbf{nnf(P, P1): }This deals with either the double negation, or De Morgan's laws: 
-    
-    $\neg (\neg P) \equiv P$
+    \item \textbf{\texttt{nnf(P, P1)}:} Converts the formula to negation normal form
+    by applying double negation and De Morgan's laws recursively, until $\neg$
+    appears only in front of atoms:
 
-    $\neg(P \lor Q) \equiv \neg P \land \neg Q $ 
-    
-    $ \neg(P \land Q) \equiv \neg P \lor \neg Q$
+    $\neg(\neg P) \equiv P$
 
-    \item \textbf{dist(P, CNF): }This rule formats the proposition to CNF using distribution laws. 
-    
+    $\neg(P \lor Q) \equiv \neg P \land \neg Q$
+
+    $\neg(P \land Q) \equiv \neg P \lor \neg Q$
+
+    \item \textbf{\texttt{dist(P, CNF)}:} Converts a formula in negation normal form
+    to CNF. For a disjunction, it first converts both sides to CNF and then
+    combines them with \texttt{dist\_or/3}, which applies the distributive laws:
+
     $P \lor (Q \land R) \equiv (P \lor Q) \land (P \lor R)$
 
-    $(Q \land R) \lor P \equiv (P \lor Q) \land (P \lor R)$
+    $(Q \land R) \lor P \equiv (Q \lor P) \land (R \lor P)$
 
-    \item \textbf{}
+    \item \textbf{\texttt{conj\_list(CNF, Conjuncts)}:} Flattens a CNF formula into
+    the list of its conjuncts:
+
+    $(p \lor q) \land r \mapsto [\,p \lor q,\ r\,]$
+
+    \item \textbf{\texttt{disj\_list(C, Literals)}:} Flattens a single conjunct (a
+    clause) into the list of its literals. It is applied to every conjunct with
+    \texttt{maplist}:
+
+    $p \lor q \mapsto [p, q]$
+
+    \item \textbf{\texttt{tautology(C)}:} Succeeds if clause \texttt{C} contains a
+    literal and its negation (e.g.\ $\{p, \neg p\}$). Such clauses are always
+    true, so they are removed.
 \end{itemize}
 
-\section{Control Strategies}
+\subsection*{Control strategy}
+
+The program relies on Prolog's built-in control strategy (SLD resolution):
+execution is goal-driven, the clauses of a predicate are tried from top to
+bottom, the goals in a clause body are executed from left to right, and on
+failure Prolog backtracks depth-first to the most recent choice point.
+
+On top of this, \texttt{formula2cnf/2} follows a deterministic rewriting
+strategy. The input is first validated with \texttt{propositionp/1}, which
+guarantees that every subformula matches one of the cases of the later
+predicates. The transformation then runs as three passes in a fixed order,
+where each pass depends on the previous one: \texttt{nnf/2} has no cases for
+$\rightarrow$ or $\leftrightarrow$ because \texttt{elim/2} has already removed
+them, and \texttt{dist/2} assumes its input is in negation normal form.
+
+Each pass uses structural recursion over the formula tree, with one clause per
+connective: \texttt{elim/2} and \texttt{dist/2} work bottom-up (the
+subformulas are processed before the root is rewritten), while \texttt{nnf/2}
+works top-down, pushing negations from the root toward the atoms. In every
+predicate, the specific cases come before a catch-all base case for literals,
+and each specific case contains a cut (\texttt{!}). The cut commits Prolog to
+the first matching clause, so every input has exactly one output; without it,
+backtracking would also apply the base case and return incorrect alternative
+answers. These are therefore red cuts: removing them changes the program's
+meaning.
+
+Finally, the clause list is post-processed in sequence: flattening
+(\texttt{conj\_list/2}, \texttt{disj\_list/2}), sorting each clause into a set,
+removing tautologies, removing duplicate clauses, and numbering
+(\texttt{findall/3}).
 
 \section{Correctness Argument}
 

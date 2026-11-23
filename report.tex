@@ -109,8 +109,7 @@ failure Prolog backtracks depth-first to the most recent choice point.
 
 On top of this, \texttt{formula2cnf/2} follows a deterministic rewriting
 strategy. The input is first validated with \texttt{propositionp/1}, which
-guarantees that every subformula matches one of the cases of the later
-predicates. The transformation then runs as three passes in a fixed order,
+proves that the proposition is properly written. Then, it runs as three rules in a fixed order,
 where each pass depends on the previous one: \texttt{nnf/2} has no cases for
 $\rightarrow$ or $\leftrightarrow$ because \texttt{elim/2} has already removed
 them, and \texttt{dist/2} assumes its input is in negation normal form.

@@ -96,7 +96,7 @@ eval_cnf([], _, true) :- !.
 eval_cnf([_-Clause | Rest], Val, Bool) :-
     eval_clause(Clause, Val, B1),
     (   (B1 == false)
-    ->  Bool = false
+->  (Bool = false)
     ;   eval_cnf(Rest, Val, Bool)
     ).
 
@@ -104,7 +104,7 @@ eval_clause([], _, false) :- !.
 eval_clause([Lit | Rest], Val, Bool) :-
     eval_literal(Lit, Val, B1),
     (   (B1 == true)
-    ->  Bool = true
+->  (Bool = true)
     ;   eval_clause(Rest, Val, Bool)
     ).
 

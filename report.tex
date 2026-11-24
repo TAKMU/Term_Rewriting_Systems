@@ -184,142 +184,129 @@ checking equivalence on concrete examples.
 
 \section{Testing Evidence}
 
-\begin{longtable}{|l|l|l|l|l|}
+\begin{longtable}{|p{3.8cm}|p{3.4cm}|p{6.0cm}|p{2.4cm}|}
 \hline
-Test & Input & Output & Truth Table (Input / Output) & Equivalence \\
+Test Name \& Input & Output & Truth Table & Equivalence \\
 \hline
 \endfirsthead
 \hline
-Test & Input & Output & Truth Table (Input / Output) & Equivalence \\
+Test Name \& Input & Output & Truth Table & Equivalence \\
 \hline
 \endhead
 \hline
 \endfoot
-Test 1 - atom &
-\texttt{p} &
-\texttt{[1-[p]]} &
+\hline
+\multicolumn{4}{|l|}{PASS: Input and output are equivalent in the truth table.} \\
+\hline
+\endlastfoot
+
+Test 1 - atom \newline \texttt{p} & \texttt{[1-[p]]} & 
 \begin{tabular}{c|c|c}
 $p$ & In & Out \\
 \hline
-T & T & T \\
-F & F & F
-\end{tabular} &
-PASS (Truth-table equivalent) \\
+1 & 1 & 1 \\
+0 & 0 & 0 \\
+\end{tabular} & PASS \\
 \hline
-Test 2 - negated\_atom &
-\texttt{$\neg$p} &
-\texttt{[1-[$\neg$p]]} &
+
+Test 2 - negated\_atom \newline \texttt{$\neg$p} & \texttt{[1-[$\neg$p]]} & 
 \begin{tabular}{c|c|c}
 $p$ & In & Out \\
 \hline
-T & F & F \\
-F & T & T
-\end{tabular} &
-PASS (Truth-table equivalent) \\
+1 & 0 & 0 \\
+0 & 1 & 1 \\
+\end{tabular} & PASS \\
 \hline
-Test 3 - implication &
-\texttt{p->q} &
-\texttt{[1-[q,$\neg$p]]} &
+
+Test 3 - implication \newline \texttt{p->q} & \texttt{[1-[q,$\neg$p]]} & 
 \begin{tabular}{cc|c|c}
 $p$ & $q$ & In & Out \\
 \hline
-T & T & T & T \\
-T & F & F & F \\
-F & T & T & T \\
-F & F & T & T
-\end{tabular} &
-PASS (Truth-table equivalent) \\
+1 & 1 & 1 & 1 \\
+1 & 0 & 0 & 0 \\
+0 & 1 & 1 & 1 \\
+0 & 0 & 1 & 1 \\
+\end{tabular} & PASS \\
 \hline
-Test 4 - equivalence &
-\texttt{p<->q} &
-\texttt{[1-[p,$\neg$q],2-[q,$\neg$p]]} &
+
+Test 4 - equivalence \newline \texttt{p<->q} & \texttt{[1-[p,$\neg$q],2-[q,$\neg$p]]} & 
 \begin{tabular}{cc|c|c}
 $p$ & $q$ & In & Out \\
 \hline
-T & T & T & T \\
-T & F & F & F \\
-F & T & F & F \\
-F & F & T & T
-\end{tabular} &
-PASS (Truth-table equivalent) \\
+1 & 1 & 1 & 1 \\
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 1 \\
+\end{tabular} & PASS \\
 \hline
-Test 5 - nested\_negation &
-\texttt{$\neg\neg$ (p$\backslash$/$\neg$q)} &
-\texttt{[1-[p,$\neg$q]]} &
+
+Test 5 - nested\_negation \newline \texttt{$\neg\neg$ (p$\lor\neg$q)} & \texttt{[1-[p,$\neg$q]]} & 
 \begin{tabular}{cc|c|c}
 $p$ & $q$ & In & Out \\
 \hline
-T & T & T & T \\
-T & F & T & T \\
-F & T & F & F \\
-F & F & T & T
-\end{tabular} &
-PASS (Truth-table equivalent) \\
+1 & 1 & 1 & 1 \\
+1 & 0 & 1 & 1 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 1 \\
+\end{tabular} & PASS \\
 \hline
-Test 6 - distribution &
-\texttt{p$\backslash$/q/$\backslash$r} &
-\texttt{[1-[p,q],2-[p,r]]} &
+
+Test 6 - distribution \newline \texttt{p$\lor$q$\land$r} & \texttt{[1-[p,q],2-[p,r]]} & 
 \begin{tabular}{ccc|c|c}
 $p$ & $q$ & $r$ & In & Out \\
 \hline
-T & T & T & T & T \\
-T & T & F & T & T \\
-T & F & T & T & T \\
-T & F & F & T & T \\
-F & T & T & T & T \\
-F & T & F & F & F \\
-F & F & T & F & F \\
-F & F & F & F & F
-\end{tabular} &
-PASS (Truth-table equivalent) \\
+1 & 1 & 1 & 1 & 1 \\
+1 & 1 & 0 & 1 & 1 \\
+1 & 0 & 1 & 1 & 1 \\
+1 & 0 & 0 & 1 & 1 \\
+0 & 1 & 1 & 1 & 1 \\
+0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+\end{tabular} & PASS \\
 \hline
-Test 7 - tautology &
-\texttt{p$\backslash$/$\neg$p} &
-\texttt{[]} &
+
+Test 7 - tautology \newline \texttt{p$\lor\neg$p} & \texttt{[]} & 
 \begin{tabular}{c|c|c}
 $p$ & In & Out \\
 \hline
-T & T & T \\
-F & T & T
-\end{tabular} &
-PASS (Truth-table equivalent) \\
+1 & 1 & 1 \\
+0 & 1 & 1 \\
+\end{tabular} & PASS \\
 \hline
-Test 8 - contradiction &
-\texttt{p/$\backslash\neg$p} &
-\texttt{[1-[p],2-[$\neg$p]]} &
+
+Test 8 - contradiction \newline \texttt{p$\land\neg$p} & \texttt{[1-[p],2-[$\neg$p]]} & 
 \begin{tabular}{c|c|c}
 $p$ & In & Out \\
 \hline
-T & F & F \\
-F & F & F
-\end{tabular} &
-PASS (Truth-table equivalent) \\
+1 & 0 & 0 \\
+0 & 0 & 0 \\
+\end{tabular} & PASS \\
 \hline
-Test 9 - more\_than\_one\_rule &
-\texttt{p$\backslash$/q->r$\backslash$/s} &
-\texttt{[1-[r,s,$\neg$p],2-[r,s,$\neg$q]]} &
+
+Test 9 - more\_than\_one\_rule \newline \texttt{p$\lor$q->r$\lor$s} & \texttt{[1-[r,s,$\neg$p],2-[r,s,$\neg$q]]} & 
 \begin{tabular}{cccc|c|c}
 $p$ & $q$ & $r$ & $s$ & In & Out \\
 \hline
-T & T & T & T & T & T \\
-T & T & T & F & T & T \\
-T & T & F & T & T & T \\
-T & T & F & F & F & F \\
-T & F & T & T & T & T \\
-T & F & T & F & T & T \\
-T & F & F & T & T & T \\
-T & F & F & F & F & F \\
-F & T & T & T & T & T \\
-F & T & T & F & T & T \\
-F & T & F & T & T & T \\
-F & T & F & F & F & F \\
-F & F & T & T & T & T \\
-F & F & T & F & T & T \\
-F & F & F & T & T & T \\
-F & F & F & F & T & T
-\end{tabular} &
-PASS (Truth-table equivalent) \\
+1 & 1 & 1 & 1 & 1 & 1 \\
+1 & 1 & 1 & 0 & 1 & 1 \\
+1 & 1 & 0 & 1 & 1 & 1 \\
+1 & 1 & 0 & 0 & 0 & 0 \\
+1 & 0 & 1 & 1 & 1 & 1 \\
+1 & 0 & 1 & 0 & 1 & 1 \\
+1 & 0 & 0 & 1 & 1 & 1 \\
+1 & 0 & 0 & 0 & 0 & 0 \\
+0 & 1 & 1 & 1 & 1 & 1 \\
+0 & 1 & 1 & 0 & 1 & 1 \\
+0 & 1 & 0 & 1 & 1 & 1 \\
+0 & 1 & 0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 1 & 1 & 1 \\
+0 & 0 & 1 & 0 & 1 & 1 \\
+0 & 0 & 0 & 1 & 1 & 1 \\
+0 & 0 & 0 & 0 & 1 & 1 \\
+\end{tabular} & PASS \\
 \hline
+
 \end{longtable}
 
 \section{Known Limitations}

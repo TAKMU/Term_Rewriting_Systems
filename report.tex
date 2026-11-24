@@ -183,6 +183,122 @@ well-formed input. The truth-table test suite complements this argument by
 checking equivalence on concrete examples.
 
 \section{Testing Evidence}
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{3.5pt}
+
+\noindent
+\begin{tabularCNF}{\textwidth}{|l|l|l|X|l|}
+\hline
+\textbf{Test} & \textbf{Input} & \textbf{Output} & \textbf{Truth Table (Input vs. Output)} & \textbf{Equivalence} \\
+\hline
+
+Test 1 & $p$ & \texttt{[1-[p]]} &
+\begin{tabular}[t]{@{}c|c|c@{}}
+$p$ & In & Out \\ \hline
+T & T & T \\
+F & F & F
+\end{tabular} &
+PASS \\
+\hline
+
+Test 2 & $\neg p$ & \texttt{[1-[¬p]]} &
+\begin{tabular}[t]{@{}c|c|c@{}}
+$p$ & In & Out \\ \hline
+T & F & F \\
+F & T & T
+\end{tabular} &
+PASS \\
+\hline
+
+Test 3 & $p \rightarrow q$ & \texttt{[1-[q,¬p]]} &
+\begin{tabular}[t]{@{}cc|c|c@{}}
+$p$ & $q$ & In & Out \\ \hline
+T & T & T & T \\
+T & F & F & F \\
+F & T & T & T \\
+F & F & T & T
+\end{tabular} &
+PASS \\
+\hline
+
+Test 4 & $p \leftrightarrow q$ & \texttt{[1-[p,¬q],2-[q,¬p]]} &
+\begin{tabular}[t]{@{}cc|c|c@{}}
+$p$ & $q$ & In & Out \\ \hline
+T & T & T & T \\
+T & F & F & F \\
+F & T & F & F \\
+F & F & T & T
+\end{tabular} &
+PASS \\
+\hline
+
+Test 5 & $\neg\neg(p \lor \neg q)$ & \texttt{[1-[p,¬q]]} &
+\begin{tabular}[t]{@{}cc|c|c@{}}
+$p$ & $q$ & In & Out \\ \hline
+T & T & T & T \\
+T & F & T & T \\
+F & T & F & F \\
+F & F & T & T
+\end{tabular} &
+PASS \\
+\hline
+
+Test 6 & $p \lor (q \land r)$ & \texttt{[1-[p,q],2-[p,r]]} &
+\begin{tabular}[t]{@{}ccc|c|c@{}}
+$p$ & $q$ & $r$ & In & Out \\ \hline
+T & T & T & T & T \\
+T & T & F & T & T \\
+T & F & T & T & T \\
+T & F & F & T & T \\
+F & T & T & T & T \\
+F & T & F & F & F \\
+F & F & T & F & F \\
+F & F & F & F & F
+\end{tabular} &
+PASS \\
+\hline
+
+Test 7 & $p \lor \neg p$ & \texttt{[]} &
+\begin{tabular}[t]{@{}c|c|c@{}}
+$p$ & In & Out \\ \hline
+T & T & T \\
+F & T & T
+\end{tabular} &
+PASS \\
+\hline
+
+Test 8 & $p \land \neg p$ & \texttt{[1-[p],2-[¬p]]} &
+\begin{tabular}[t]{@{}c|c|c@{}}
+$p$ & In & Out \\ \hline
+T & F & F \\
+F & F & F
+\end{tabular} &
+PASS \\
+\hline
+
+Test 9 & $(p \lor q) \rightarrow (r \lor s)$ & \texttt{[1-[r,s,¬p],2-[r,s,¬q]]} &
+\begin{tabular}[t]{@{}cccc|c|c@{}}
+$p$ & $q$ & $r$ & $s$ & In & Out \\ \hline
+T & T & T & T & T & T \\
+T & T & T & F & T & T \\
+T & T & F & T & T & T \\
+T & T & F & F & F & F \\
+T & F & T & T & T & T \\
+T & F & T & F & T & T \\
+T & F & F & T & T & T \\
+T & F & F & F & F & F \\
+F & T & T & T & T & T \\
+F & T & T & F & T & T \\
+F & T & F & T & T & T \\
+F & T & F & F & F & F \\
+F & F & T & T & T & T \\
+F & F & T & F & T & T \\
+F & F & F & T & T & T \\
+F & F & F & F & T & T
+\end{tabular} &
+PASS \\
+\hline
+\end{tabularCNF}
 
 \section{Known Limitations}
 

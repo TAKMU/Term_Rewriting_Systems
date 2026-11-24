@@ -183,6 +183,40 @@ well-formed input. The truth-table test suite complements this argument by
 checking equivalence on concrete examples.
 
 \section{Testing Evidence}
+\subsection{Dual Semantic Evaluators}
+
+To compare the original formula against its CNF output under a fixed valuation
+$I$, the code implements two recursive interpreters.
+
+\paragraph{A. Formula evaluator (\texttt{eval\_formula/3}).}
+It implements the standard compositional, truth-functional semantics directly
+over the abstract syntax tree of $\varphi$:
+\begin{itemize}
+    \item It looks up atoms with \texttt{memberchk(P-Bool, Val)}.
+    \item It recursively evaluates subformulas and applies the Boolean truth
+          tables (\texttt{bool\_not/2}, \texttt{bool\_and/3}, \texttt{bool\_or/3},
+          \texttt{bool\_imp/3}, \texttt{bool\_iff/3}).
+\end{itemize}
+
+\paragraph{B. Indexed CNF evaluator (\texttt{eval\_cnf/3}, \texttt{eval\_clause/3}, \texttt{eval\_literal/3}).}
+It evaluates the output structure \texttt{[1-Clause1, 2-Clause2, ...]} using
+short-circuit evaluation:
+\begin{itemize}
+    \item \textbf{Conjunction of clauses (\texttt{eval\_cnf/3}):} Returns true if
+          every clause evaluates to true. If any clause evaluates to false, it
+          short-circuits to false immediately.
+    \item \textbf{Boundary case (verum, $\top$):} An empty clause list
+          \texttt{[]} (the empty conjunction) evaluates to true, i.e.\ the input
+          was a tautology.
+    \item \textbf{Disjunction of literals (\texttt{eval\_clause/3}):} Returns true
+          as soon as any literal in the clause evaluates to true.
+    \item \textbf{Boundary case (falsum, $\bot$):} An empty clause
+          \texttt{\_-[]} (the empty disjunction) evaluates to false, i.e.\ it is
+          unsatisfiable.
+    \item \textbf{Literals (\texttt{eval\_literal/3}):} Positive atoms are
+          evaluated directly, and for a negative literal $\neg$\texttt{Atom} the
+          truth value is negated.
+\end{itemize}
 
 \begin{longtable}{|p{3.8cm}|p{3.4cm}|p{6.0cm}|p{2.4cm}|}
 \hline

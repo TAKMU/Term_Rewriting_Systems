@@ -16,7 +16,7 @@
 
 
 \title{Term Rewriting Systems}
-\author{Allan Ken Miyazono Ushijima \and Luis Fregoso}
+\author{Allan Ken Miyazono Ushijima \and Luis Martin Fregoso Aparicio}
 
 \date{}
 \begin{document}
@@ -184,65 +184,84 @@ checking equivalence on concrete examples.
 
 \section{Testing Evidence}
 
-\begin{tabularx}{\textwidth}{|l|l|l|X|l|}
+\begin{longtable}{|l|l|l|l|l|}
 \hline
-\textbf{Test} & \textbf{Input} & \textbf{Output} & \textbf{Truth Table (Input vs. Output)} & \textbf{Equivalence} \\
+Test & Input & Output & Truth Table (Input / Output) & Equivalence \\
 \hline
-
-Test 1 & $p$ & \texttt{[1-[p]]} &
-\begin{tabular}[t]{@{}c|c|c@{}}
-$p$ & In & Out \\ \hline
+\endfirsthead
+\hline
+Test & Input & Output & Truth Table (Input / Output) & Equivalence \\
+\hline
+\endhead
+\hline
+\endfoot
+Test 1 - atom &
+\texttt{p} &
+\texttt{[1-[p]]} &
+\begin{tabular}{c|c|c}
+$p$ & In & Out \\
+\hline
 T & T & T \\
 F & F & F
 \end{tabular} &
-PASS \\
+PASS (Truth-table equivalent) \\
 \hline
-
-Test 2 & $\neg p$ & \texttt{[1-[¬p]]} &
-\begin{tabular}[t]{@{}c|c|c@{}}
-$p$ & In & Out \\ \hline
+Test 2 - negated\_atom &
+\texttt{$\neg$p} &
+\texttt{[1-[$\neg$p]]} &
+\begin{tabular}{c|c|c}
+$p$ & In & Out \\
+\hline
 T & F & F \\
 F & T & T
 \end{tabular} &
-PASS \\
+PASS (Truth-table equivalent) \\
 \hline
-
-Test 3 & $p \rightarrow q$ & \texttt{[1-[q,¬p]]} &
-\begin{tabular}[t]{@{}cc|c|c@{}}
-$p$ & $q$ & In & Out \\ \hline
+Test 3 - implication &
+\texttt{p->q} &
+\texttt{[1-[q,$\neg$p]]} &
+\begin{tabular}{cc|c|c}
+$p$ & $q$ & In & Out \\
+\hline
 T & T & T & T \\
 T & F & F & F \\
 F & T & T & T \\
 F & F & T & T
 \end{tabular} &
-PASS \\
+PASS (Truth-table equivalent) \\
 \hline
-
-Test 4 & $p \leftrightarrow q$ & \texttt{[1-[p,¬q],2-[q,¬p]]} &
-\begin{tabular}[t]{@{}cc|c|c@{}}
-$p$ & $q$ & In & Out \\ \hline
+Test 4 - equivalence &
+\texttt{p<->q} &
+\texttt{[1-[p,$\neg$q],2-[q,$\neg$p]]} &
+\begin{tabular}{cc|c|c}
+$p$ & $q$ & In & Out \\
+\hline
 T & T & T & T \\
 T & F & F & F \\
 F & T & F & F \\
 F & F & T & T
 \end{tabular} &
-PASS \\
+PASS (Truth-table equivalent) \\
 \hline
-
-Test 5 & $\neg\neg(p \lor \neg q)$ & \texttt{[1-[p,¬q]]} &
-\begin{tabular}[t]{@{}cc|c|c@{}}
-$p$ & $q$ & In & Out \\ \hline
+Test 5 - nested\_negation &
+\texttt{$\neg\neg$ (p$\backslash$/$\neg$q)} &
+\texttt{[1-[p,$\neg$q]]} &
+\begin{tabular}{cc|c|c}
+$p$ & $q$ & In & Out \\
+\hline
 T & T & T & T \\
 T & F & T & T \\
 F & T & F & F \\
 F & F & T & T
 \end{tabular} &
-PASS \\
+PASS (Truth-table equivalent) \\
 \hline
-
-Test 6 & $p \lor (q \land r)$ & \texttt{[1-[p,q],2-[p,r]]} &
-\begin{tabular}[t]{@{}ccc|c|c@{}}
-$p$ & $q$ & $r$ & In & Out \\ \hline
+Test 6 - distribution &
+\texttt{p$\backslash$/q/$\backslash$r} &
+\texttt{[1-[p,q],2-[p,r]]} &
+\begin{tabular}{ccc|c|c}
+$p$ & $q$ & $r$ & In & Out \\
+\hline
 T & T & T & T & T \\
 T & T & F & T & T \\
 T & F & T & T & T \\
@@ -252,30 +271,36 @@ F & T & F & F & F \\
 F & F & T & F & F \\
 F & F & F & F & F
 \end{tabular} &
-PASS \\
+PASS (Truth-table equivalent) \\
 \hline
-
-Test 7 & $p \lor \neg p$ & \texttt{[]} &
-\begin{tabular}[t]{@{}c|c|c@{}}
-$p$ & In & Out \\ \hline
+Test 7 - tautology &
+\texttt{p$\backslash$/$\neg$p} &
+\texttt{[]} &
+\begin{tabular}{c|c|c}
+$p$ & In & Out \\
+\hline
 T & T & T \\
 F & T & T
 \end{tabular} &
-PASS \\
+PASS (Truth-table equivalent) \\
 \hline
-
-Test 8 & $p \land \neg p$ & \texttt{[1-[p],2-[¬p]]} &
-\begin{tabular}[t]{@{}c|c|c@{}}
-$p$ & In & Out \\ \hline
+Test 8 - contradiction &
+\texttt{p/$\backslash\neg$p} &
+\texttt{[1-[p],2-[$\neg$p]]} &
+\begin{tabular}{c|c|c}
+$p$ & In & Out \\
+\hline
 T & F & F \\
 F & F & F
 \end{tabular} &
-PASS \\
+PASS (Truth-table equivalent) \\
 \hline
-
-Test 9 & $(p \lor q) \rightarrow (r \lor s)$ & \texttt{[1-[r,s,¬p],2-[r,s,¬q]]} &
-\begin{tabular}[t]{@{}cccc|c|c@{}}
-$p$ & $q$ & $r$ & $s$ & In & Out \\ \hline
+Test 9 - more\_than\_one\_rule &
+\texttt{p$\backslash$/q->r$\backslash$/s} &
+\texttt{[1-[r,s,$\neg$p],2-[r,s,$\neg$q]]} &
+\begin{tabular}{cccc|c|c}
+$p$ & $q$ & $r$ & $s$ & In & Out \\
+\hline
 T & T & T & T & T & T \\
 T & T & T & F & T & T \\
 T & T & F & T & T & T \\
@@ -293,9 +318,9 @@ F & F & T & F & T & T \\
 F & F & F & T & T & T \\
 F & F & F & F & T & T
 \end{tabular} &
-PASS \\
+PASS (Truth-table equivalent) \\
 \hline
-\end{tabularx}
+\end{longtable}
 
 \section{Known Limitations}
 

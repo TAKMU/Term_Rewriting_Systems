@@ -168,6 +168,10 @@ test_case(8, contradiction,
     "Contradiction (p /\\ ¬p) produces two complementary unit clauses [[p], [¬p]], unsatisfiable under all valuations.",
     p /\ ¬p).
 
+test_case(9, more_than_one_rule,
+    "Implication of two disjunctions ((p \\/ q) -> (r \\/ s)) produces two clauses [r,s,¬p], [r,s,¬q].",
+    (p \/ q) -> (r \/ s)).
+
 % ============================================================================
 % Test Runner
 % ============================================================================

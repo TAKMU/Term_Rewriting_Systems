@@ -6,7 +6,7 @@
 \usepackage[htt]{hyphenat}
 \usepackage{enumitem}
 \setlist{nosep}                        % tighter itemize/enumerate
-
+\addbibresource{references.bib}
 \usepackage[compact]{titlesec}         % less space around section headings
 
 \renewcommand*{\bibfont}{\small}  
@@ -130,7 +130,57 @@ Finally, the clause list is post-processed in sequence: flattening
 removing tautologies, removing duplicate clauses, and numbering
 (\texttt{findall/3}).
 
-\section{Correctness Argument}
+\section{Correctness}
+
+We argue that for every well-formed formula $P$, \texttt{formula2cnf(P, L)}
+terminates and returns a set of clauses $L$ in CNF that is logically
+equivalent to $P$ (i.e.\ has the same truth value under every valuation).
+Well-formedness is the precondition, and it is checked by \texttt{propositionp/1}
+before any transformation; otherwise a \texttt{domain\_error} is raised.
+
+\paragraph{Termination.} Every recursive call is made on a strictly smaller
+formula: \texttt{elim/2} and \texttt{dist/2} recurse only on direct
+subformulas; \texttt{nnf/2} recurses on $P$ for $\neg\neg P$, and on $\neg P$
+and $\neg Q$ for $\neg(P \land Q)$ and $\neg(P \lor Q)$, which are smaller than the
+original; and each call of \texttt{dist\_or/3} decreases the combined size of
+its two arguments. Since formula size is a natural number, every chain of calls
+ends.
+
+\paragraph{Form.} Each pass establishes an invariant, proved by structural
+induction, that is the precondition of the next pass:
+\begin{itemize}
+    \item after \texttt{elim/2}, there are only $\neg$, $\land$ and $\lor$.
+    \item after \texttt{nnf/2}, $\neg$ occurs only directly in front of atoms, smallest units.
+    \item after \texttt{dist/2}, the formula is a conjunction of disjunctions of
+          literals (CNF). The key lemma is that if $A$ and $B$ are in CNF, then
+          \texttt{dist\_or(A, B, R)} yields $R$ in CNF: if neither has $\land$ at
+          its root, both are clauses and $A \lor B$ is a clause; otherwise one
+          $\land$ is split off and the lemma applies to smaller arguments.
+\end{itemize}
+This is why the passes must run in this order: \texttt{nnf/2} is only correct on
+formulas without $\rightarrow$ and $\leftrightarrow$, and \texttt{dist/2} only on
+formulas in negation normal form.
+
+\paragraph{Equivalence.} Every rewriting clause applies a known logical
+equivalence: biconditional and implication elimination
+($P \leftrightarrow Q \equiv (\neg P \lor Q) \land (\neg Q \lor P)$,
+$P \rightarrow Q \equiv \neg P \lor Q$), double negation, De Morgan's laws,
+and distributivity \cite{huthLogicComputerScience2004}. By the replacement theorem, replacing a subformula with an
+equivalent one yields an equivalent formula, so applying these laws recursively
+inside $P$ preserves equivalence; by transitivity, the result of the three
+passes is equivalent to $P$.
+
+The post-processing also preserves equivalence: flattening into lists relies on
+the associativity of $\land$ and $\lor$; sorting and removing duplicate literals
+and clauses rely on commutativity and idempotence ($p \lor p \equiv p$,
+$C \land C \equiv C$); removing a clause containing both $p$ and $\neg p$ is
+valid because such a clause is equivalent to $\top$ and $X \land \top \equiv X$
+(hence a tautology yields $L = [\,]$, the empty conjunction); and numbering only
+adds labels.
+
+Together, these three parts show that \texttt{formula2cnf/2} is correct for every
+well-formed input. The truth-table test suite complements this argument by
+checking equivalence on concrete examples.
 
 \section{Testing Evidence}
 
@@ -138,4 +188,7 @@ removing tautologies, removing duplicate clauses, and numbering
 
 \section{Contributions}
 Allan Miyazono focused on coding \texttt{formula2cnf/2} and wrote section 1 \& 2, while Luis Fregoso focused on coding the tests and wrote the rest of the report. 
+
+\printbibliography
+
 \end{document}
